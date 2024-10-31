@@ -6,7 +6,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(SOURCE_FILES
         ${CMAKE_SOURCE_DIR}/src/main.cpp
         ${CMAKE_SOURCE_DIR}/src/glad.c
-        ${CMAKE_SOURCE_DIR}/src/common/shader.cpp
+        ${CMAKE_SOURCE_DIR}/src/renderer/shader.cpp
+        ${CMAKE_SOURCE_DIR}/src/renderer/shader.h
 )
 
 add_executable(fireball ${SOURCE_FILES})
@@ -19,7 +20,7 @@ target_link_directories(fireball PRIVATE ${CMAKE_SOURCE_DIR}/dependencies/lib)
 
 find_package(OpenGL REQUIRED)
 target_link_libraries(fireball
-        ${CMAKE_SOURCE_DIR}/dependencies/lib/libglfw.3.4.dylib
+        ${CMAKE_SOURCE_DIR}/dependencies/lib/libglfw3.a
         OpenGL::GL
         "-framework OpenGL"    # Use OpenGL framework
         "-framework Cocoa"      # Required for macOS GUI
