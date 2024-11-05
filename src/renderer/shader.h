@@ -1,6 +1,7 @@
 #ifndef SHADER_H
 #define SHADER_H
 #include <string>
+#include <glad/glad.h>
 
 struct ShaderProgramSource {
     std::string VertexSource;
@@ -10,6 +11,8 @@ struct ShaderProgramSource {
 class Shader {
 public:
     static unsigned int LoadShader(const std::string &shaderPath);
+
+    ~Shader();
 
 private:
     static ShaderProgramSource ParseShader(const std::string &shaderPath);

@@ -2,8 +2,6 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 
 unsigned int Shader::CreateShader(const std::string &vertexShaderSource, const std::string &fragmentShaderSource) {
@@ -70,8 +68,7 @@ ShaderProgramSource Shader::ParseShader(const std::string &shaderPath) {
             ss[static_cast<int>(type)] << line << "\n";
         }
     }
-    std::cout << "Vertex shader: " << ss[0].str() << std::endl;
-    std::cout << "Fragment shader: " << ss[1].str() << std::endl;
+    fs.close();
     return {ss[0].str(), ss[1].str()};
 }
 
@@ -84,4 +81,8 @@ unsigned int Shader::LoadShader(const std::string &shaderPath) {
     return CreateShader(source.VertexSource, source.FragmentSource);
 }
 
+
+Shader::~Shader() {
+    std::cout << "[DEBUG]: Shader destructor initialized - shutting down shader program.\n";
+}
 

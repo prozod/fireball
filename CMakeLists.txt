@@ -8,6 +8,11 @@ set(SOURCE_FILES
         ${CMAKE_SOURCE_DIR}/src/glad.c
         ${CMAKE_SOURCE_DIR}/src/renderer/shader.cpp
         ${CMAKE_SOURCE_DIR}/src/renderer/shader.h
+        src/renderer/renderer.cpp
+        src/renderer/vertexBuffer.h
+        src/renderer/vertexBuffer.cpp
+        src/renderer/indexBuffer.h
+        src/renderer/indexBuffer.cpp
 )
 
 add_executable(fireball ${SOURCE_FILES})
