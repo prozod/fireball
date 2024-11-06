@@ -9,7 +9,7 @@ VertexArray::~VertexArray() {
     GLCall(glDeleteVertexArrays(1, &m_rendererID));
 }
 
-void VertexArray::AddBuffer(const VertexBuffer &vb, const VertexBufferLayout &layout) {
+void VertexArray::AddBuffer(const VertexBuffer &vb, const VertexBufferLayout &layout) const {
     // need to be bound before calling glEnableVertexAttribArray, otherwise glEnableVertexAttribArray wont have a valid VAO to modify/operate on.
     Bind();
     vb.Bind();

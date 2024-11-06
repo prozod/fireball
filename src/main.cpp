@@ -76,41 +76,43 @@ int main() {
     }
 
     VertexArray va;
-
     VertexBuffer vb(position, 4 * 2 * sizeof(position));
+    VertexBufferLayout vbl;
+    Shader shader("../src/res/shader.glsl");
 
-    VertexBufferLayout layout;
-    layout.Push<float>(2);
-    va.AddBuffer(vb, layout);
+    shader.Bind();
+    vbl.Push<float>(2);
+    va.AddBuffer(vb, vbl);
 
     IndexBuffer ib(indices, 6 * sizeof(indices));
 
     va.Unbind();
+    shader.Unbind();
+    vb.Unbind();
+    ib.Unbind();
 
-    unsigned int program_instance = Shader::LoadShader("../src/res/shader.glsl");
+    unsigned int program_instance = shader.programID;
+
+
     if (program_instance == 0) {
         std::cerr << "[ERROR]: Shader program could not be created." << std::endl;
         return -1;
     }
-    GLCall(glUseProgram(program_instance));
 
-    // get uniform location (returns int index for the shaders uniform variable location)
-    GLCall(int transformLoc = glGetUniformLocation(program_instance, "transform"));
-    ASSERT(transformLoc != -1);
-    // initialize the 'transform' matrix as identity
+
     mat4x4_identity(transform);
-
-    GLCall(int colorLoc = glGetUniformLocation(program_instance, "u_color"));
-    ASSERT(colorLoc != -1)
 
     float r = 0.4f;
     float g = 0.2f;
     float r_inc = 0.05;
 
     float lastFrameTime = 0.0f;
+
+    Renderer renderer;
+
     while (!glfwWindowShouldClose(window)) {
         float speed = 1.5f;
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        renderer.Clear();
 
         // calculate deltaTime for consistent movement across frames
         float currentFrameTime = glfwGetTime();
@@ -127,13 +129,10 @@ int main() {
             mat4x4_translate_in_place(transform, speed * deltaTime, 0.0f, 0.0f);
 
 
-        // pass uniforms to shader
-        GLCall(glUniformMatrix4fv(transformLoc, 1, GL_FALSE, reinterpret_cast<const GLfloat *>(transform)));
-        GLCall(glUniform4f(colorLoc, r, 0.2, g, 1.0f));
+        shader.SetUniformMatrix4fv("transform", *transform, false);
+        shader.SetUniform4f("u_color", r, g, 0.3f, 1.0f);
 
-        va.Bind();
-        ib.Bind();
-        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, reinterpret_cast<void *>(0 * sizeof(unsigned int))));
+        renderer.Draw(va, ib, shader);
 
         if (r > 1.0f) {
             r_inc = -0.05;
@@ -143,13 +142,14 @@ int main() {
         r += r_inc;
         g += r_inc;
 
-        glBindVertexArray(0);
         glfwSwapBuffers(window);
         glfwSwapInterval(1); // enable vsync
         glfwPollEvents(); // poll for window events such as kb, mouse etc.
     }
 
-    glDeleteProgram(program_instance);
+    shader.Unbind();
+    va.Unbind();
+    ib.Unbind();
     glfwDestroyWindow(window);
     glfwTerminate();
     return 0;

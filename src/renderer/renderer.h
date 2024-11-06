@@ -11,11 +11,19 @@
     x;\
     ASSERT(GLPrintError(#x, __FILE__, __LINE__))
 
+class Shader;
+class IndexBuffer;
+class VertexArray;
+
 void GLClearError();
 
 bool GLPrintError(const char *fn, const char *file, int line);
 
-class renderer {
+class Renderer {
+public:
+    void Clear() const;
+
+    void Draw(const VertexArray &vao, const IndexBuffer &ib, Shader &shader);
 };
 
 
