@@ -8,6 +8,7 @@
 #include "renderer/renderer.h"
 #include "renderer/vertexBuffer.h"
 #include "renderer/indexBuffer.h"
+#include "renderer/vertexArray.h"
 
 mat4x4 transform;
 
@@ -16,7 +17,6 @@ constexpr int WINDOW_HEIGHT = 768;
 
 
 float position[] = {
-    // First rectangle
     -0.3f, -0.3f, // Bottom-left
     0.3f, -0.3f, // Bottom-right
     0.3f, 0.3f, // Top-right
@@ -24,8 +24,8 @@ float position[] = {
 };
 
 unsigned int indices[] = {
-    0, 1, 2, // First rectangle, first triangle
-    2, 3, 0, // First rectangle, second triangle
+    0, 1, 2, // first triangle
+    2, 3, 0, // second triangle
 };
 
 
@@ -68,25 +68,24 @@ int main() {
     }
 
     glfwMakeContextCurrent(window);
-    glfwSetKeyCallback(window, key_callback);
+    glfwSetKeyCallback(window, key_callback); // handle kb inputs
 
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
 
-    GLuint VAO;
-    GLCall(glGenVertexArrays(1, &VAO));
-    GLCall(glBindVertexArray(VAO));
+    VertexArray va;
 
-    VertexBuffer vb(position, sizeof(position));
-    GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE,
-        2 * sizeof(float), nullptr));
-    GLCall(glEnableVertexAttribArray(0));
+    VertexBuffer vb(position, 4 * 2 * sizeof(position));
+
+    VertexBufferLayout layout;
+    layout.Push<float>(2);
+    va.AddBuffer(vb, layout);
 
     IndexBuffer ib(indices, 6 * sizeof(indices));
 
-    GLCall(glBindVertexArray(0));
+    va.Unbind();
 
     unsigned int program_instance = Shader::LoadShader("../src/res/shader.glsl");
     if (program_instance == 0) {
@@ -95,8 +94,10 @@ int main() {
     }
     GLCall(glUseProgram(program_instance));
 
+    // get uniform location (returns int index for the shaders uniform variable location)
     GLCall(int transformLoc = glGetUniformLocation(program_instance, "transform"));
     ASSERT(transformLoc != -1);
+    // initialize the 'transform' matrix as identity
     mat4x4_identity(transform);
 
     GLCall(int colorLoc = glGetUniformLocation(program_instance, "u_color"));
@@ -111,6 +112,7 @@ int main() {
         float speed = 1.5f;
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        // calculate deltaTime for consistent movement across frames
         float currentFrameTime = glfwGetTime();
         float deltaTime = currentFrameTime - lastFrameTime;
         lastFrameTime = currentFrameTime;
@@ -125,14 +127,13 @@ int main() {
             mat4x4_translate_in_place(transform, speed * deltaTime, 0.0f, 0.0f);
 
 
+        // pass uniforms to shader
         GLCall(glUniformMatrix4fv(transformLoc, 1, GL_FALSE, reinterpret_cast<const GLfloat *>(transform)));
         GLCall(glUniform4f(colorLoc, r, 0.2, g, 1.0f));
 
-        GLCall(glBindVertexArray(VAO));
+        va.Bind();
         ib.Bind();
-
         GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, reinterpret_cast<void *>(0 * sizeof(unsigned int))));
-        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, reinterpret_cast<void *>(6 * sizeof(unsigned int))));
 
         if (r > 1.0f) {
             r_inc = -0.05;
@@ -144,8 +145,8 @@ int main() {
 
         glBindVertexArray(0);
         glfwSwapBuffers(window);
-        glfwSwapInterval(1);
-        glfwPollEvents();
+        glfwSwapInterval(1); // enable vsync
+        glfwPollEvents(); // poll for window events such as kb, mouse etc.
     }
 
     glDeleteProgram(program_instance);

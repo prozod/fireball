@@ -13,6 +13,10 @@ set(SOURCE_FILES
         src/renderer/vertexBuffer.cpp
         src/renderer/indexBuffer.h
         src/renderer/indexBuffer.cpp
+        src/renderer/vertexArray.h
+        src/renderer/vertexArray.cpp
+        src/renderer/vertexBufferLayout.h
+        src/renderer/vertexBufferLayout.cpp
 )
 
 add_executable(fireball ${SOURCE_FILES})
