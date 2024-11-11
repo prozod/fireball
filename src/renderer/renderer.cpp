@@ -1,5 +1,4 @@
 #include "renderer.h"
-
 #include "shader.h"
 #include "indexBuffer.h"
 #include "vertexArray.h"
@@ -30,6 +29,7 @@ void Renderer::Draw(const VertexArray &va, const IndexBuffer &ib, Shader &shader
 
 void Renderer::Clear() const {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 

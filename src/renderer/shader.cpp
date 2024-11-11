@@ -45,6 +45,30 @@ unsigned int Shader::CompileShader(unsigned int type, const std::string &source)
 }
 
 void Shader::Bind() const {
+    if (programID == 0) {
+        std::cerr << "[ERROR]: Trying to bind an invalid shader program." << std::endl;
+        return;
+    }
+
+    // GLint success;
+    // glGetProgramiv(programID, GL_LINK_STATUS, &success);
+    // if (!success) {
+    //     char infoLog[512];
+    //     glGetProgramInfoLog(programID, 512, nullptr, infoLog);
+    //     std::cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+    //     return;
+    // }
+    //
+    // // Validate the program before using it
+    // glGetProgramiv(programID, GL_VALIDATE_STATUS, &success);
+    // if (success == GL_FALSE) {
+    //     std::cerr << "[ERROR]: Shader program validation failed!" << std::endl;
+    //     char infoLog[512];
+    //     glGetProgramInfoLog(programID, 512, nullptr, infoLog);
+    //     std::cerr << "[Validation Log]: " << infoLog << std::endl;
+    //     return;
+    // }
+
     GLCall(glUseProgram(programID));
 }
 
@@ -52,13 +76,21 @@ void Shader::Unbind() const {
     glDeleteProgram(programID);
 }
 
+void Shader::SetUniform2f(const std::string &name, float v0, float v1) {
+    GLCall(glUniform2f(GetUniformLocation(name), v0, v1));
+}
+
+void Shader::SetUniform1i(const std::string &name, int value) {
+    GLCall(glUniform1i(GetUniformLocation(name), value));
+}
+
 void Shader::SetUniform4f(const std::string &name, float v0, float v1, float v2, float v3) {
     GLCall(glUniform4f(GetUniformLocation(name), v0, v1, v2, v3));
 }
 
-void Shader::SetUniformMatrix4fv(const std::string &name, const GLfloat *matrix, bool transpose) {
+void Shader::SetUniformMatrix4fv(const std::string &name, const glm::mat4 &matrix, bool transpose) {
     GLCall(
-        glUniformMatrix4fv(GetUniformLocation(name), 1, transpose ? GL_TRUE : GL_FALSE, matrix));
+        glUniformMatrix4fv(GetUniformLocation(name), 1, transpose ? GL_TRUE : GL_FALSE, &matrix[0][0]));
 }
 
 unsigned int Shader::GetUniformLocation(const std::string &name) {
@@ -76,7 +108,7 @@ unsigned int Shader::GetUniformLocation(const std::string &name) {
 }
 
 ShaderProgramSource Shader::ParseShader(const std::string &shaderPath) {
-    std::cout << "[DEBUG]: Starting to parse shader: " << shaderPath << std::endl;
+    // std::cout << "[DEBUG]: Starting to parse shader: " << shaderPath << std::endl;
     std::ifstream fs(shaderPath);
     if (fs.fail()) {
         std::cout << "[ERROR]: Failed to load shader at path: " << shaderPath << std::endl;
@@ -113,6 +145,6 @@ Shader::Shader(const std::string &shaderPath) {
 }
 
 Shader::~Shader() {
-    std::cout << "[DEBUG]: Shader destructor initialized - shutting down shader program.\n";
+    // std::cout << "[DEBUG]: Shader destructor initialized - shutting down shader program.\n";
 }
 
