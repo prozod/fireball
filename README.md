@@ -2,7 +2,7 @@
 
 > UNDER DEVELOPMENT
 
-A minimalistic implementation of a platform game. Inspired by the classic 1979 Asteroids arcade game and various
+A minimalistic implementation of 2D game. Inspired by the classic 1979 Asteroids arcade game and various
 platformers.
 
 - C++20
@@ -39,6 +39,7 @@ What's the highest score obtained? Can you get past 100 points?
 ### To do
 
 - [x] Rendering 2D shapes
+- [x] Using keyboard events/animating shapes
 - [x] Loading textures
 - [x] Context window boundaries
 - [x] Collision detection

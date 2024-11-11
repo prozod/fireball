@@ -284,8 +284,9 @@ int main() {
         if (currentFrameTime - lastCollisionTime >= collisionCooldown) {
           if (checkCollision(playerTranslation, playerWidth, playerHeight, *it, ballSize)) {
             if (playerXballCollisionNumber < playerLifetime) {
-              std::cout << "[[[ PROJECTILE HIT ]]]" << std::endl;
-              std::cout << "You have " << playerLifetime - playerXballCollisionNumber << " lives left." << std::endl;
+              std::cout << "[[[[[ PROJECTILE HIT ]]]]]" << std::endl;
+              std::cout << "-----| You have " << playerLifetime - playerXballCollisionNumber << " lives left" <<
+                  std::endl;
               playerXballCollisionNumber += 1;
               ballsToSpawn += 1;
               individualBallSpeed += 150.0f;
