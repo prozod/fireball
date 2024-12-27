@@ -1,4 +1,4 @@
-<img src="/assets/fireball.png" height="100" width="auto">
+<img alt="logofireball" src="/assets/fireball.png" height="100" width="auto">
 
 > UNDER DEVELOPMENT
 
@@ -24,6 +24,8 @@ Each successful evasion fuels your internal power, making the next encounter eve
 But beware, three fateful strikes, and your journey ends! Can you master the inferno and emerge victorious?
 
 What's the highest score obtained? Can you get past 100 points?
+
+<img src="/assets/game.png" alt="game picture" height="600" width="auto">
 
 ---
 
